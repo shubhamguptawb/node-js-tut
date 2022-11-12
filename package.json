@@ -1,1 +1,23 @@
-{}
+{
+  "name": "js-tut",
+  "version": "1.0.0",
+  "description": "node js tutorial",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shubham-wb/node-js-tut.git"
+  },
+  "author": "shubham-wb",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/shubham-wb/node-js-tut/issues"
+  },
+  "homepage": "https://github.com/shubham-wb/node-js-tut#readme",
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
