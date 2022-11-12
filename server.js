@@ -1,19 +1,17 @@
 const http = require("http"); //look for a global file http
 const express = require("express");
-//express execute a construction and create a object
 const app = express();
-//use allows us to use a middleware accepts 3 arguments req, res , next
-app.use((req, res, next) => {
-  console.log("In the middleware");
-  next();
+
+//add slash for path
+
+app.use("/add-product", (req, res, next) => {
+  //will send automatic header
+  res.send("<h1>Add Product Page</h1>");
 });
 
-app.use((req, res, next) => {
-  console.log("In another Middleware");
+app.use("/", (req, res, next) => {
+  res.send("<h1>Hello World</h1>");
 });
 
-const server = http.createServer(app);
-
-server.listen(3000);
-
-//server response
+//previous two will be done automatically
+app.listen(3000);
