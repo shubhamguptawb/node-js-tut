@@ -12,6 +12,9 @@ const bodyParser = require("body-parser");
 
 app.use(bodyParser.urlencoded({ extended: false }));
 
+//not handle express for get request but access a folder from file system
+app.use(express.static(path.join(__dirname, "public")));
+
 //order of routes matter
 //only accept request starting with admin
 app.use("/admin", adminRoutes);
