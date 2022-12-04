@@ -3,12 +3,15 @@ const express = require("express");
 
 const rootDir = require("../util/path");
 
+const adminData = require("./admin");
+
 const router = express.Router();
 
-//send html files
-//we need to put project location for file not the os location so path module will be used0000
 router.get("/", (req, res, next) => {
-  res.sendFile(path.join(rootDir, "views", "shop.html"));
+  //render method provide by express
+  // res.sendFile(path.join(rootDir, "views", "shop.html"));
+  const products = adminData.products;
+  res.render("shop", { prods: products, docTitle: "Shop" });
 });
-//dirname will refer to location  of directory we  are in  i.e. address of routes folder  '//join is used because linus use \ window use /
+
 module.exports = router;
