@@ -1,12 +1,9 @@
-const mysql = require("mysql2");
+// create a new sequelize object
+const Sequelize = require("Sequelize");
 
-//creating a pool of connection so that we do npt have to reconnect again and again
-
-const pool = mysql.createPool({
+const sequelize = new Sequelize("node-complete", "root", "12345678@", {
+  dialect: "mysql",
   host: "localhost",
-  user: "root",
-  database: "node-complete",
-  password: "12345678@",
 });
 
-module.exports = pool.promise();
+module.exports = sequelize;
