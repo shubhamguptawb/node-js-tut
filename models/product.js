@@ -14,6 +14,22 @@ class Product {
       .then((result) => console.log(result))
       .catch((err) => console.log(err));
   }
+  //find gives a cursor only do not return a promise i.e. it gives only the amount of data that is required as there may be a million of data that cant be given in a go
+
+  //to array will give array but
+  static fetchAll() {
+    return getDb()
+      .collection("products")
+      .find()
+      .toArray()
+      .then((products) => {
+        console.log(products);
+        return products;
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
 }
 
 module.exports = Product;
