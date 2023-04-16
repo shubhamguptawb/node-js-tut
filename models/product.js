@@ -1,68 +1,24 @@
-const mongodb = require("mongodb");
-const getDb = require("../util/database").getDb;
-class Product {
-  constructor(title, price, description, imageUrl, id) {
-    this.title = title;
-    this.price = price;
-    this.description = description;
-    this.imageUrl = imageUrl;
-    this._id = id ? new mongodb.ObjectId(id) : null;
-  }
-  save() {
-    const db = getDb();
-    let dbOp = db;
-    if (this._id) {
-      return dbOp
-        .collection("products")
-        .updateOne({ _id: this._id }, { $set: this });
-    } else {
-      return dbOp
-        .collection("products")
-        .insertOne(this)
-        .then((result) => console.log(result))
-        .catch((err) => console.log(err));
-    }
-  }
-  //find gives a cursor only do not return a promise i.e. it gives only the amount of data that is required as there may be a million of data that cant be given in a go
+const mongoose = require("mongoose");
 
-  //to array will give array but
-  static fetchAll() {
-    return getDb()
-      .collection("products")
-      .find()
-      .toArray()
-      .then((products) => {
-        console.log(products);
-        return products;
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }
-  static findById(prodId) {
-    const db = getDb();
-    return db
-      .collection("products")
-      .find({ _id: new mongodb.ObjectId(prodId) })
-      .next()
-      .then((product) => {
-        return product;
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }
+const Schema = mongoose.Schema;
 
-  static deleteById(prodId) {
-    const db = getDb();
-    return db
-      .collection("products")
-      .deleteOne({
-        _id: new mongodb.ObjectId(prodId),
-      })
-      .then((result) => console.log(result))
-      .catch((err) => console.log(err));
-  }
-}
+const productSchema = new Schema({
+  title: {
+    type: String,
+    required: true,
+  },
+  price: {
+    type: Number,
+    required: true,
+  },
+  description: {
+    type: String,
+    required: true,
+  },
+  imageUrl: {
+    type: String,
+    required: true,
+  },
+});
 
-module.exports = Product;
+module.exports = mongoose.model("Product", productSchema);
