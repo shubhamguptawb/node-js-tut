@@ -77,8 +77,13 @@ exports.postEditProduct = (req, res, next) => {
     .catch((err) => console.log(err));
 };
 
+//mongoose has populate to get all the data from id
+//you have to give path
+//select will give you which field you want
 exports.getProducts = (req, res, next) => {
   Product.find()
+    // .select("title price -_id")
+    // .populate("userId", "name")
     .then((products) => {
       res.render("admin/products", {
         prods: products,
