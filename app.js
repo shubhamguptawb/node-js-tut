@@ -17,14 +17,13 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "public")));
 
 app.use((req, res, next) => {
-  User.findById("643b485d69f0b3a92a6021df")
+  User.findById("643b65e1f682e365ca762e19")
     .then((user) => {
       req.user = user;
       next();
     })
     .catch((err) => console.log(err));
 });
-
 app.use("/admin", adminRoutes);
 app.use(shopRoutes);
 
