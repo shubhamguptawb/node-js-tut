@@ -4,17 +4,20 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const session = require("express-session");
-
 const MongoDBStore = require("connect-mongodb-session")(session);
 
 const errorController = require("./controllers/error");
 const User = require("./models/user");
 
+const MONGODB_URI =
+  "mongodb+srv://scmotorsofficial:qQKODqToaRW00SEQ@cluster0.xzu3jyy.mongodb.net/test?retryWrites=true&w=majority";
+
 const app = express();
 const store = new MongoDBStore({
-  uri: "mongodb+srv://scmotorsofficial:BBg38tYMYmFZ3dEF@cluster0.xzu3jyy.mongodb.net/test?retryWrites=true&w=majority",
+  uri: MONGODB_URI,
   collection: "sessions",
 });
+
 app.set("view engine", "ejs");
 app.set("views", "views");
 
@@ -34,7 +37,10 @@ app.use(
 );
 
 app.use((req, res, next) => {
-  User.findById("5bab316ce0a7c75f783cb8a8")
+  if (!req.session.user) {
+    return next();
+  }
+  User.findById(req.session.user._id)
     .then((user) => {
       req.user = user;
       next();
@@ -49,15 +55,13 @@ app.use(authRoutes);
 app.use(errorController.get404);
 
 mongoose
-  .connect(
-    "mongodb+srv://scmotorsofficial:BBg38tYMYmFZ3dEF@cluster0.xzu3jyy.mongodb.net/test?retryWrites=true&w=majority"
-  )
+  .connect(MONGODB_URI)
   .then((result) => {
     User.findOne().then((user) => {
       if (!user) {
         const user = new User({
-          name: "Shubham",
-          email: "shubham@gmail.com",
+          name: "Max",
+          email: "max@test.com",
           cart: {
             items: [],
           },
