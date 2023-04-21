@@ -6,9 +6,9 @@ const mongoose = require("mongoose");
 const session = require("express-session");
 const MongoDBStore = require("connect-mongodb-session")(session);
 
-//what this does is it send a random token with each view so that if someone has build up a fake site he cant send request from that site to us
 const csrf = require("csurf");
-
+//to display error message across app
+const flash = require("connect-flash");
 const errorController = require("./controllers/error");
 const User = require("./models/user");
 
@@ -42,7 +42,8 @@ app.use(
 );
 
 app.use(csrfProtection);
-
+//this will store a error in session db and when it is used it will be deleted
+app.use(flash());
 app.use((req, res, next) => {
   if (!req.session.user) {
     return next();
