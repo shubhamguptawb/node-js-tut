@@ -15,6 +15,7 @@ const User = require("./models/user");
 const MONGODB_URI =
   "mongodb+srv://scmotorsofficial:qQKODqToaRW00SEQ@cluster0.xzu3jyy.mongodb.net/test?retryWrites=true&w=majority";
 
+require("dotenv").config();
 const app = express();
 const store = new MongoDBStore({
   uri: MONGODB_URI,
