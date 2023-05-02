@@ -43,39 +43,53 @@ app.use(
 );
 
 app.use(csrfProtection);
-//this will store a error in session db and when it is used it will be deleted
 app.use(flash());
-app.use((req, res, next) => {
-  if (!req.session.user) {
-    return next();
-  }
-  User.findById(req.session.user._id)
-    .then((user) => {
-      req.session.user = user;
-      next();
-    })
-    .catch((err) => console.log(err));
-});
-//res.locals is provided by express js it will be passed to each view by default
-//here we have added a middleware before fetching routes
-
 app.use((req, res, next) => {
   res.locals.isAuthenticated = req.session.isLoggedIn;
   res.locals.csrfToken = req.csrfToken();
   next();
+});
+app.use((req, res, next) => {
+  if (!req.session.user) {
+    return next();
+  }
+  // throw new Error("Dummy");
+  User.findById(req.session.user._id)
+    .then((user) => {
+      if (!user) {
+        return next();
+      }
+      req.session.user = user;
+      next();
+    })
+    .catch((err) => {
+      // inside of promise middleware will be called like this
+      next(new Error());
+      throw new Error(err);
+    });
 });
 
 app.use("/admin", adminRoutes);
 app.use(shopRoutes);
 app.use(authRoutes);
 
+app.get("/500", errorController.get500);
 app.use(errorController.get404);
 
+app.use((error, req, res, next) => {
+  res.status(500).render("500", {
+    pageTitle: "Error!",
+    path: "/500",
+    isAuthenticated: req.session.isLoggedIn,
+  });
+});
 mongoose
   .connect(MONGODB_URI)
   .then((result) => {
     app.listen(3000);
   })
   .catch((err) => {
-    console.log(err);
+    const error = new Error(err);
+    error.httpStatusCode = 500;
+    return next(error);
   });
