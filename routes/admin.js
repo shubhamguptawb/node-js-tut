@@ -2,8 +2,8 @@ const path = require("path");
 
 const express = require("express");
 const { body } = require("express-validator/src");
-const adminController = require("../controllers/admin");
 
+const adminController = require("../controllers/admin");
 const isAuth = require("../middleware/is-auth");
 
 const router = express.Router();
@@ -20,7 +20,7 @@ router.post(
   [
     body("title").isString().isLength({ min: 3 }).trim(),
     body("price").isFloat(),
-    body("description").isAlphanumeric().isLength({ min: 8, max: 400 }).trim(),
+    body("description").isLength({ min: 5, max: 400 }).trim(),
   ],
   isAuth,
   adminController.postAddProduct
@@ -34,7 +34,7 @@ router.post(
     body("title").isString().isLength({ min: 3 }).trim(),
     body("imageUrl").isURL(),
     body("price").isFloat(),
-    body("description").isAlphanumeric().isLength({ min: 8, max: 400 }).trim(),
+    body("description").isLength({ min: 5, max: 400 }).trim(),
   ],
   isAuth,
   adminController.postEditProduct

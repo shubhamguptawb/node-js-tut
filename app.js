@@ -25,7 +25,28 @@ const store = new MongoDBStore({
 });
 
 const csrfProtection = csrf();
+// disk storage is an engine provided by multer
+const fileStorage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "images");
+  },
+  filename: function (req, file, cb) {
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    cb(null, uniqueSuffix + "-" + file.originalname);
+  },
+});
 
+const fileFilter = (req, file, cb) => {
+  if (
+    file.mimetype === "image/png" ||
+    file.mimetype === "image/jpg" ||
+    file.mimetype === "image/webp"
+  ) {
+    cb(null, true);
+  } else {
+    cb(null, false);
+  }
+};
 app.set("view engine", "ejs");
 app.set("views", "views");
 
@@ -33,13 +54,15 @@ const adminRoutes = require("./routes/admin");
 const shopRoutes = require("./routes/shop");
 const authRoutes = require("./routes/auth");
 
-// parse body as string text
-//we need to change it to others to parse file
 app.use(bodyParser.urlencoded({ extended: false }));
-//multer is a file parser and for single upload we write single and the file name that will be imported +
-// app.use(multer().single("image"));
-//store  the image in path
-app.use(multer({ dest: "images" }).single("image"));
+
+app.use(
+  multer({
+    dest: "images",
+    storage: fileStorage,
+    fileFilter: fileFilter,
+  }).single("image")
+);
 app.use(express.static(path.join(__dirname, "public")));
 app.use(
   session({
@@ -58,6 +81,7 @@ app.use((req, res, next) => {
   next();
 });
 app.use((req, res, next) => {
+  console.log(req);
   if (!req.session.user) {
     return next();
   }
