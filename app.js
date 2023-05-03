@@ -9,6 +9,8 @@ const MongoDBStore = require("connect-mongodb-session")(session);
 const csrf = require("csurf");
 //to display error message across app
 const flash = require("connect-flash");
+const multer = require("multer");
+
 const errorController = require("./controllers/error");
 const User = require("./models/user");
 
@@ -31,7 +33,13 @@ const adminRoutes = require("./routes/admin");
 const shopRoutes = require("./routes/shop");
 const authRoutes = require("./routes/auth");
 
+// parse body as string text
+//we need to change it to others to parse file
 app.use(bodyParser.urlencoded({ extended: false }));
+//multer is a file parser and for single upload we write single and the file name that will be imported +
+// app.use(multer().single("image"));
+//store  the image in path
+app.use(multer({ dest: "images" }).single("image"));
 app.use(express.static(path.join(__dirname, "public")));
 app.use(
   session({
@@ -77,6 +85,7 @@ app.get("/500", errorController.get500);
 app.use(errorController.get404);
 
 app.use((error, req, res, next) => {
+  console.log(error, "error");
   res.status(500).render("500", {
     pageTitle: "Error!",
     path: "/500",
